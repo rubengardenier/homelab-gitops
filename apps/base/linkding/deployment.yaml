@@ -14,7 +14,7 @@ spec:
     spec:
       securityContext:
         fsGroup: 33
-        runasUser: 33
+        runAsUser: 33
         runAsGroup: 33
 
       containers:
