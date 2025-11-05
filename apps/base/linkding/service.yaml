@@ -1,0 +1,10 @@
+apiVersion: v1
+kind: Service
+metdata:
+  name: linkding
+spec:
+  ports:
+    - port: 9090
+  selector:
+    app: linkding
+  type: ClusterIP
