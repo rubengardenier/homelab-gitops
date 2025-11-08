@@ -1,0 +1,14 @@
+# clusters/staging/infra-networking.yaml
+apiVersion: kustomize.toolkit.fluxcd.io/v1
+kind: Kustomization
+metadata:
+  name: networking
+  namespace: flux-system
+spec:
+  interval: 10m0s
+  sourceRef:
+    kind: GitRepository
+    name: flux-system
+  # PATH is de directe route naar de networking map vanuit clusters/staging
+  path: ./../../apps/networking/cloudflare-tunnel 
+  prune: true
