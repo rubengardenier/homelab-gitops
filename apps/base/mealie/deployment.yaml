@@ -34,4 +34,4 @@ spec:
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: mealie-pvc # Zorgt voor persistente opslag van recepten
+            claimName: mealie-data-pvc # Zorgt voor persistente opslag van recepten
