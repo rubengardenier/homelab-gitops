@@ -6,7 +6,7 @@ spec:
   selector:
     matchLabels:
       app: cloudflared
-  replicas: 2 # You could also consider elastic scaling for this deployment
+  replicas: 2 # U gebruikt 2 replicas
   template:
     metadata:
       labels:
@@ -17,17 +17,11 @@ spec:
         image: cloudflare/cloudflared:latest
         args:
         - tunnel
-
-        # Points cloudflared to the config file, which configures what
-        # cloudflared will actually do. This file is created by a ConfigMap
-        # below.
         - --config
         - /etc/cloudflared/config/config.yaml
         - run
         livenessProbe:
           httpGet:
-            # Cloudflared has a /ready endpoint which returns 200 if and only if
-            # it has an active connection to the edge.
             path: /ready
             port: 2000
           failureThreshold: 1
@@ -37,9 +31,6 @@ spec:
         - name: config
           mountPath: /etc/cloudflared/config
           readOnly: true
-        # Each tunnel has an associated "credentials file" which authorizes machines
-        # to run the tunnel. cloudflared will read this file from its local filesystem,
-        # and it'll be stored in a k8s secret.
         - name: creds
           mountPath: /etc/cloudflared/creds
           readOnly: true
@@ -48,24 +39,20 @@ spec:
         secret:
           secretName: tunnel-credential
 
-        # Create a config.yaml file from the ConfigMap below.
       - name: config
         configMap:
-          # CRUCIAAL: Naam aangepast om te matchen met de verwachte ConfigMap.
-          name: cloudflared-config 
+          # Cruciaal: Naam aangepast om te matchen met de verwachte ConfigMap.
+          name: cloudflared-config
           items:
           - key: config.yaml
             path: config.yaml
 ---
-# This ConfigMap is just a way to define the cloudflared config.yaml file in k8s.
-# It's useful to define it in k8s, rather than as a stand-alone .yaml file, because
-# this lets you use various k8s templating solutions (e.g. Helm charts) to
-# parameterize your config, instead of just using string literals.
+# Dit ConfigMap object bevat de feitelijke tunnel-configuratie (config.yaml)
 apiVersion: v1
 kind: ConfigMap
 metadata:
-  # CRUCIAAL: Naam aangepast van 'cloudflared' naar 'cloudflared-config'
-  name: cloudflared-config 
+  # Cruciaal: Naam aangepast om te matchen met de Deployment mount.
+  name: cloudflared-config
 data:
   config.yaml: |
     # Name of the tunnel you want to run
@@ -77,17 +64,17 @@ data:
     no-autoupdate: true
 
     ingress:
+    # Linkding Correctie: Gebruik linkding.linkding
     - hostname: linkding.homekube.dev
-      service: http://linkding:9090
+      service: http://linkding.linkding:9090
 
-    # VEREISTE CORRECTIE: Toevoegen van de Mealie route
+    # Mealie Correctie: Gebruik mealie.mealie
     - hostname: mealie.homekube.dev
-      service: http://mealie:9000 
+      service: http://mealie.mealie:9000
 
-    # This rule sends traffic to the built-in hello-world HTTP server. This can help debug connectivity
-    # issues. If hello.example.com resolves and tunnel.example.com does not, then the problem is
-    # in the connection from cloudflared to your local service, not from the internet to cloudflared.
+    # Dit is de 'hello_world' route voor debugging
     - hostname: hello.example.com
       service: hello_world
+      
     # This rule matches any traffic which didn't match a previous rule, and responds with HTTP 404.
     - service: http_status:404
