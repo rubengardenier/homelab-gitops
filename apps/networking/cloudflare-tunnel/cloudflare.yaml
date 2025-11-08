@@ -43,7 +43,7 @@ spec:
         - name: creds
           mountPath: /etc/cloudflared/creds
           readOnly: true
-        volumes:
+      volumes:
       - name: creds
         secret:
           secretName: tunnel-credential
@@ -80,7 +80,7 @@ data:
     - hostname: linkding.homekube.dev
       service: http://linkding:9090
 
-    # NIEUW: Toevoegen van de Mealie route
+    # VEREISTE CORRECTIE: Toevoegen van de Mealie route
     - hostname: mealie.homekube.dev
       service: http://mealie:80 
 
