@@ -1,0 +1,8 @@
+# Bestandsnaam: apps/staging/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  # Bundelt de Linkding Kustomization
+  - linkding
+  # Bundelt de Mealie Kustomization
+  - mealie
