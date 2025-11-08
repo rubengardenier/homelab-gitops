@@ -11,6 +11,12 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  # Dit vertelt Flux: Ga naar de 'apps/staging' map en zoek de kustomization.yaml daarbinnen.
-  path: ./apps/staging 
+  # Nieuwe path: verwijst naar de root van alle applicaties
+  path: ./apps
   prune: true
+  
+  # Bundelt nu direct alle afzonderlijke Kustomization-mappen:
+  resources:
+    - staging/linkding              # Verwijst naar apps/staging/linkding
+    - staging/mealie               # Verwijst naar apps/staging/mealie
+    - networking/cloudflare-tunnel # Verwijst naar apps/networking/cloudflare-tunnel (DE OPLOSSING!)
