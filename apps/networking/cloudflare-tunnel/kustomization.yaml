@@ -1,0 +1,7 @@
+# apps/networking/cloudflare-tunnel/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: networking  
+resources:
+  - cloudflare.yaml
+  - secret.yaml
