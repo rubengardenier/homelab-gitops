@@ -1,35 +1,37 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  name: linkding
+  # Dit wordt later overschreven door de Kustomization naar de 'mealie' namespace
+  labels:
+    app: mealie
+  name: mealie
 spec:
   replicas: 1
   selector:
     matchLabels:
-      app: linkding
+      app: mealie
   template:
     metadata:
       labels:
-        app: linkding
+        app: mealie # Cruciaal: dit moet 'mealie' zijn zodat de Service de Pod vindt.
     spec:
-      securityContext:
-        fsGroup: 33
-        runAsUser: 33
-        runAsGroup: 33
-
       containers:
-        - name: linkding
-          image: sissbruecker/linkding:1.31.0
+        - image: ghcr.io/mealie-recipes/mealie:v3.2.1 # De specifieke image die u wenst
+          name: mealie
           ports:
-            - containerPort: 9090
-
-          securityContext:
-            allowPrivilegeEscalation: false
-
+            - containerPort: 9000 # Correcte poort voor Mealie V3
+          env:
+          # Omgevingsvariabelen behouden van eerdere concepten
+          - name: PUID
+            value: "1000"
+          - name: PGID
+            value: "1000"
+          
+          # Cruciaal: De volume mounts om de data op te slaan
           volumeMounts:
-            - name: linkding-data
-              mountPath: /etc/linkding/data
+          - name: data
+            mountPath: /app/data
       volumes:
-        - name: linkding-data
+        - name: data
           persistentVolumeClaim:
-            claimName: linkding-data-pvc
+            claimName: mealie-pvc # Zorgt voor persistente opslag van recepten
