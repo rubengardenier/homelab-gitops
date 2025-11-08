@@ -1,0 +1,8 @@
+# Bestandsnaam: apps/staging/kustomization.yaml
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+resources:
+  # Bundelt alle applicatie-Kustomizations in de staging omgeving:
+  - linkding
+  - mealie
+  - ../networking/cloudflare-tunnel # <-- DIT IS DE BELANGRIJKSTE TOEVOEGING!

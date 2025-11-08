@@ -11,9 +11,6 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  # De resources die deze Kustomization bundelt:
-  resources:
-    - ../../apps/networking/cloudflare-tunnel # <-- Zorgt voor de tunnel-Deployment/Secret/Namespace
-    - ../../apps/staging/linkding          # <-- Bundelt de Linkding-applicatie
-    - ../../apps/staging/mealie            # <-- Bundelt de Mealie-applicatie
+  # Zorg dat dit pad alle applicatie-Kustomizations bevat:
+  path: ./apps/staging 
   prune: true
