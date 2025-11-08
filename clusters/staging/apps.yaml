@@ -1,3 +1,4 @@
+# Bestandsnaam: clusters/staging/apps.yaml
 apiVersion: kustomize.toolkit.fluxcd.io/v1
 kind: Kustomization
 metadata:
@@ -5,12 +6,14 @@ metadata:
   namespace: flux-system
 spec:
   interval: 10m0s
-  # dependsOn:
-  #  - name: infra-configs
   retryInterval: 1m
   timeout: 5m
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./apps/staging
+  # De resources die deze Kustomization bundelt:
+  resources:
+    - ../../apps/networking/cloudflare-tunnel # <-- Zorgt voor de tunnel-Deployment/Secret/Namespace
+    - ../../apps/staging/linkding          # <-- Bundelt de Linkding-applicatie
+    - ../../apps/staging/mealie            # <-- Bundelt de Mealie-applicatie
   prune: true
