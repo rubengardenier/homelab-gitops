@@ -2,7 +2,8 @@
 apiVersion: kustomize.config.k8s.io/v1beta1
 kind: Kustomization
 resources:
-  # Bundelt alle applicatie-Kustomizations in de staging omgeving:
+  # Bundelt de applicaties
   - linkding
   - mealie
-  - ../networking/cloudflare-tunnel # <-- DIT IS DE BELANGRIJKSTE TOEVOEGING!
+  # Bundelt de gedeelde netwerkinfrastructuur (de tunnel)
+  - ../networking/cloudflare-tunnel
