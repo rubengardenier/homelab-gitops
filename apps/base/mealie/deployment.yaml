@@ -1,7 +1,6 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
-  # Dit wordt later overschreven door de Kustomization naar de 'mealie' namespace
   labels:
     app: mealie
   name: mealie
@@ -13,25 +12,23 @@ spec:
   template:
     metadata:
       labels:
-        app: mealie # Cruciaal: dit moet 'mealie' zijn zodat de Service de Pod vindt.
+        app: mealie
     spec:
       containers:
-        - image: ghcr.io/mealie-recipes/mealie:v3.2.1 # De specifieke image die u wenst
+        - image: ghcr.io/mealie-recipes/mealie:v3.2.1
           name: mealie
           ports:
-            - containerPort: 9000 # Correcte poort voor Mealie V3
+            - containerPort: 9000
           env:
-          # Omgevingsvariabelen behouden van eerdere concepten
           - name: PUID
             value: "1000"
           - name: PGID
             value: "1000"
           
-          # Cruciaal: De volume mounts om de data op te slaan
           volumeMounts:
           - name: data
             mountPath: /app/data
       volumes:
         - name: data
           persistentVolumeClaim:
-            claimName: mealie-data-pvc # Zorgt voor persistente opslag van recepten
+            claimName: mealie-data-pvc
