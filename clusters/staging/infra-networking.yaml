@@ -8,7 +8,7 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  path: ./apps/networking/cloudflare-tunnel
+  path: ./infrastructure/networking/cloudflare-tunnel
   prune: true
   decryption:
     provider: sops
