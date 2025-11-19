@@ -14,3 +14,7 @@ spec:
   # PATH is de directe route naar de staging apps
   path: ./../../apps/staging 
   prune: true
+  decryption:
+    provider: sops
+    secretRef:
+      name: sops-age
