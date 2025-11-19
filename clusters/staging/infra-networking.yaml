@@ -8,7 +8,6 @@ spec:
   sourceRef:
     kind: GitRepository
     name: flux-system
-  # pad is t.o.v. de repo-root
   path: ./apps/networking/cloudflare-tunnel
   prune: true
   decryption:
