@@ -29,3 +29,14 @@ spec:
   values:
     grafana:
       adminPassword: ruben
+      ingress:
+        enabled: true
+        ingressClassName: traefik
+        
+        hosts:
+          - grafana.homekube.dev
+        
+        tls:
+          - secretName: grafana-tls-secret
+            hosts:
+              - grafana.homekube.dev
