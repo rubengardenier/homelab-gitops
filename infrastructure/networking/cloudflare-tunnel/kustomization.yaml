@@ -6,4 +6,3 @@ resources:
   - namespace.yaml
   - cloudflare.yaml
   - secret.yaml
-  - cloudflare-secret-audiobookshelf.yaml
