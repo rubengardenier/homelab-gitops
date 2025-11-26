@@ -71,7 +71,7 @@ data:
 
     # Audiobookshelf Correctie: Gebruik audiobookshelf.audiobookshelf
     - hostname: audiobooks.homekube.dev
-      service: http://audiobookshelf.audiobookshelf:3005
+      service: http://audiobookshelf:3005
 
     # Dit is de 'hello_world' route voor debugging
     - hostname: hello.example.com
