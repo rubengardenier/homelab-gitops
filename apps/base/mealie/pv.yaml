@@ -10,5 +10,5 @@ spec:
   persistentVolumeReclaimPolicy: Retain
   storageClassName: ""
   nfs:
-    server: 192.168.1.100            # IP van je UGREEN
+    server: 192.168.1.200            # IP van je UGREEN
     path: /volume1/kubernetes/mealie # jouw NFS-pad
