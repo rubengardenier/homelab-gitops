@@ -1,9 +1,10 @@
 apiVersion: apps/v1
 kind: Deployment
 metadata:
+  name: mealie
+  namespace: mealie          
   labels:
     app: mealie
-  name: mealie
 spec:
   replicas: 1
   selector:
@@ -14,20 +15,31 @@ spec:
       labels:
         app: mealie
     spec:
+      securityContext:
+        fsGroup: 1000        
+
       containers:
-        - image: ghcr.io/mealie-recipes/mealie:v3.5.0
-          name: mealie
+        - name: mealie
+          image: ghcr.io/mealie-recipes/mealie:v3.5.0
           ports:
             - containerPort: 9000
+
+          
           env:
-          - name: PUID
-            value: "1000"
-          - name: PGID
-            value: "1000"
+            - name: PUID
+              value: "1000"
+            - name: PGID
+              value: "1000"
+
+          securityContext:
+            runAsUser: 1000  
+            runAsGroup: 1000  
+
           
           volumeMounts:
-          - name: data
-            mountPath: /app/data
+            - name: data
+              mountPath: /app/data
+
       volumes:
         - name: data
           persistentVolumeClaim:
