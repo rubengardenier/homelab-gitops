@@ -37,7 +37,6 @@ spec:
           volumeMounts:
             - name: data
               mountPath: /app/data   
-              subPath: mealie
 
       volumes:
         - name: data
