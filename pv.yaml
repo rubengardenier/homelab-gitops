@@ -1,0 +1,11 @@
+apiVersion: v1
+kind: persistentVolumeReclaim
+metadata:
+  name: demo
+  namespace: default
+spec:
+  accessModes:
+    - ReadWriteOnce
+  resources:
+    requests:
+      storage: 1Gi
