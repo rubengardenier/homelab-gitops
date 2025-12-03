@@ -6,4 +6,5 @@ resources:
   - secrets.yaml
   - service.yaml
   - namespace.yaml
-  - storage.yaml
+  - n8n-db-secret.yaml
+  - n8n-db-cluster.yaml
