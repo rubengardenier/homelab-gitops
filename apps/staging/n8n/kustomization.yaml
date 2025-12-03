@@ -5,8 +5,3 @@ resources:
   - ../../base/n8n
   - n8n-secrets.sops.yaml
   - n8n-db-secret.sops.yaml
-
-decryption:
-  provider: sops
-  secretRef:
-    name: sops-age
