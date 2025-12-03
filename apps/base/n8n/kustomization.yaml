@@ -9,3 +9,4 @@ resources:
   - secrets.yaml
   - service.yaml
   - namespace.yaml
+  - storage.yaml
