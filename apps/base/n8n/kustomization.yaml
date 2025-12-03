@@ -5,6 +5,4 @@ resources:
   - deployment.yaml
   - service.yaml
   - namespace.yaml
-  - n8n-db-secret.yaml
   - n8n-db-cluster.yaml
-  - n8n-secrets.yaml
