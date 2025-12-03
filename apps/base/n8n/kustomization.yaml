@@ -3,9 +3,6 @@ kind: Kustomization
 resources:
   - configmap.yaml
   - deployment.yaml
-  - postgress-secrets.yaml
-  - postgress-service.yaml
-  - postgress-statefullset.yaml
   - secrets.yaml
   - service.yaml
   - namespace.yaml
