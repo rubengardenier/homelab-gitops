@@ -19,3 +19,5 @@ data:
   # Turn on basic auth
   N8N_BASIC_AUTH_ACTIVE: "true"
   N8N_BASIC_AUTH_USER: "n8n"
+  N8N_HOST: "n8n.homekube.dev"
+  N8N_PROTOCOL: "https"
