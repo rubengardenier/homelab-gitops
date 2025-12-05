@@ -65,8 +65,8 @@ data:
         service: http://linkding.linkding:9090
       - hostname: mealie.homekube.dev
         service: http://mealie.mealie:9000
-      - hostname: audiobooks.homekube.dev
-        service: http://audiobookshelf.audiobookshelf:3005
       - hostname: n8n.homekube.dev
         service: http://n8n-service.n8n:80
+      - hostname: wallabag.homekube.dev
+        service: http://wallabag.wallabag:80
       - service: http_status:404

@@ -12,7 +12,6 @@ spec:
       labels:
         app: wallabag
     spec:
-      # zelfde patroon als linkding: fsGroup 33 voor NFS
       securityContext:
         fsGroup: 33
 
