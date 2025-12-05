@@ -56,18 +56,3 @@ spec:
             limits:
               cpu: "500m"
               memory: "512Mi"
-
-          volumeMounts:
-            - name: wallabag-data
-              mountPath: /var/www/wallabag/data
-            - name: wallabag-images
-              mountPath: /var/www/wallabag/web/assets/images
-
-      volumes:
-        - name: wallabag-data
-          persistentVolumeClaim:
-            # ⬇️ belangrijk: dit moet 'wallabag' zijn, niet 'wallabag-data'
-            claimName: wallabag
-        - name: wallabag-images
-          persistentVolumeClaim:
-            claimName: wallabag
