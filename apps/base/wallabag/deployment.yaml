@@ -1,0 +1,65 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: wallabag
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: wallabag
+  template:
+    metadata:
+      labels:
+        app: wallabag
+    spec:
+      containers:
+        - name: wallabag
+          image: wallabag/wallabag:2.6.13
+          imagePullPolicy: IfNotPresent
+
+          env:
+            - name: SYMFONY__ENV__DATABASE_DRIVER
+              value: "pdo_pgsql"
+            - name: SYMFONY__ENV__DATABASE_HOST
+              value: "wallabag-db-rw"
+            - name: SYMFONY__ENV__DATABASE_PORT
+              value: "5432"
+            - name: SYMFONY__ENV__DATABASE_NAME
+              value: "wallabag"
+            - name: SYMFONY__ENV__DATABASE_USER
+              value: "wallabag"
+            - name: SYMFONY__ENV__DOMAIN_NAME
+              value: "https://wallabag.homekube.dev"
+            - name: SYMFONY__ENV__FOSUSER_REGISTRATION
+              value: "false"
+
+          # Haalt alleen het DB-wachtwoord uit secret
+          envFrom:
+            - secretRef:
+                name: wallabag-secrets
+
+          ports:
+            - name: http
+              containerPort: 80
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
+
+          volumeMounts:
+            - name: wallabag-data
+              mountPath: /var/www/wallabag/data
+            - name: wallabag-images
+              mountPath: /var/www/wallabag/web/assets/images
+
+      volumes:
+        - name: wallabag-data
+          persistentVolumeClaim:
+            claimName: wallabag
+        - name: wallabag-images
+          persistentVolumeClaim:
+            claimName: wallabag
