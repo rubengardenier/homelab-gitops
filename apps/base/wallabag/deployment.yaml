@@ -12,10 +12,17 @@ spec:
       labels:
         app: wallabag
     spec:
+      # zelfde patroon als linkding: fsGroup 33 voor NFS
+      securityContext:
+        fsGroup: 33
+
       containers:
         - name: wallabag
           image: wallabag/wallabag:2.6.14
           imagePullPolicy: IfNotPresent
+
+          securityContext:
+            allowPrivilegeEscalation: false
 
           env:
             - name: SYMFONY__ENV__DATABASE_DRIVER
@@ -33,7 +40,7 @@ spec:
             - name: SYMFONY__ENV__FOSUSER_REGISTRATION
               value: "false"
 
-          # Haalt alleen het DB-wachtwoord uit secret
+          # haalt alleen het DB-wachtwoord uit wallabag-secrets
           envFrom:
             - secretRef:
                 name: wallabag-secrets
@@ -59,6 +66,7 @@ spec:
       volumes:
         - name: wallabag-data
           persistentVolumeClaim:
+            # ⬇️ belangrijk: dit moet 'wallabag' zijn, niet 'wallabag-data'
             claimName: wallabag
         - name: wallabag-images
           persistentVolumeClaim:
