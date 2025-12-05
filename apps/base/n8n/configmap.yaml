@@ -9,7 +9,7 @@ metadata:
 data:
   NODE_ENV: "production"
   GENERIC_TIMEZONE: "Europe/Amsterdam"
-  WEBHOOK_TUNNEL_URL: "https://n8n.homekube.dev/" 
+  WEBHOOK_TUNNEL: "https://n8n.homekube.dev/" 
   # Database configurations
   DB_TYPE: "postgresdb"
   DB_POSTGRESDB_USER: "n8n"
@@ -21,3 +21,5 @@ data:
   N8N_BASIC_AUTH_USER: "n8n"
   N8N_HOST: "n8n.homekube.dev"
   N8N_PROTOCOL: "https"
+  N8N_PORT: "5678"                    
+  N8N_EDITOR_BASE_URL: "https://n8n.homekube.dev"
