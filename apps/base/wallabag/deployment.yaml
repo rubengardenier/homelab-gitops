@@ -1,7 +1,3 @@
-apiVersion: apps/v1
-kind: Deployment
-metadata:
-  name: wallabag
 spec:
   replicas: 1
   selector:
@@ -12,18 +8,12 @@ spec:
       labels:
         app: wallabag
     spec:
-      # zelfde patroon als linkding: fsGroup 33 voor NFS
       securityContext:
         fsGroup: 33
-
       containers:
         - name: wallabag
-          image: wallabag/wallabag:2.6.14
+          image: wallabag/wallabag:2.6.13
           imagePullPolicy: IfNotPresent
-
-          securityContext:
-            allowPrivilegeEscalation: false
-
           env:
             - name: SYMFONY__ENV__DATABASE_DRIVER
               value: "pdo_pgsql"
@@ -39,34 +29,17 @@ spec:
               value: "https://wallabag.homekube.dev"
             - name: SYMFONY__ENV__FOSUSER_REGISTRATION
               value: "false"
-
-          # haalt alleen het DB-wachtwoord uit wallabag-secrets
           envFrom:
             - secretRef:
                 name: wallabag-secrets
-
-          ports:
-            - name: http
-              containerPort: 80
-
-          resources:
-            requests:
-              cpu: "100m"
-              memory: "128Mi"
-            limits:
-              cpu: "500m"
-              memory: "512Mi"
-
           volumeMounts:
             - name: wallabag-data
               mountPath: /var/www/wallabag/data
             - name: wallabag-images
               mountPath: /var/www/wallabag/web/assets/images
-
       volumes:
         - name: wallabag-data
           persistentVolumeClaim:
-            # ⬇️ belangrijk: dit moet 'wallabag' zijn, niet 'wallabag-data'
             claimName: wallabag
         - name: wallabag-images
           persistentVolumeClaim:
