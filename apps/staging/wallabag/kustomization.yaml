@@ -3,5 +3,5 @@ kind: Kustomization
 namespace: wallabag
 resources:
   - ../../base/wallabag    
-  - wallabag-dc-secret-sops.yaml
+  - wallabag-dc-secret.sops.yaml
   - wallabag-secrets.sops.yaml
