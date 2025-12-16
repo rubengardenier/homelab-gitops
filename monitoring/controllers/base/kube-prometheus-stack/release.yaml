@@ -17,9 +17,14 @@ spec:
   install:
     createNamespace: false
 
+  valuesFrom:
+    - kind: Secret
+      name: grafana-admin-secret
+      valuesKey: admin-password
+      targetPath: grafana.adminPassword
+
   values:
     grafana:
-      adminPassword: ruben
       ingress:
         enabled: true
         ingressClassName: traefik
