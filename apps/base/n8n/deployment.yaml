@@ -14,13 +14,20 @@ spec:
     metadata:
       labels: *labels
     spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
       containers:
       - name: n8n
-        image: n8nio/n8n
+        image: n8nio/n8n:2.0.2
         imagePullPolicy: IfNotPresent
         ports:
         - name: http
           containerPort: 5678
+        securityContext:
+          allowPrivilegeEscalation: false
+          runAsNonRoot: true
         envFrom:
         - configMapRef:
             name: n8n-configmap

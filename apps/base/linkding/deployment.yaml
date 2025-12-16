@@ -21,10 +21,19 @@ spec:
         - name: linkding
           image: sissbruecker/linkding:1.44.2
           ports:
-            - containerPort: 9090          
+            - containerPort: 9090
 
           securityContext:
             allowPrivilegeEscalation: false
+            runAsNonRoot: true
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "128Mi"
+            limits:
+              cpu: "500m"
+              memory: "512Mi"
 
           envFrom:
             - secretRef:
