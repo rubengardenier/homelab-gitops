@@ -11,4 +11,5 @@ reclaimPolicy: Retain
 volumeBindingMode: Immediate
 mountOptions:
   - nfsvers=3
+  - nolock
 allowVolumeExpansion: true

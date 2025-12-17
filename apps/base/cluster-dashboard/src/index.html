@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Stardust Cluster Dashboard</title>
+    <link rel="stylesheet" href="style.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="container">
+        <!-- Header -->
+        <header class="header">
+            <div class="header-left">
+                <div class="logo">
+                    <svg width="32" height="32" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                        <circle cx="12" cy="12" r="3"/>
+                        <path d="M12 1v2M12 21v2M4.22 4.22l1.42 1.42M18.36 18.36l1.42 1.42M1 12h2M21 12h2M4.22 19.78l1.42-1.42M18.36 5.64l1.42-1.42"/>
+                    </svg>
+                </div>
+                <div class="header-title">
+                    <h1>Stardust Dashboard</h1>
+                    <span class="version">v1.0.0</span>
+                </div>
+            </div>
+            <div class="header-right">
+                <div class="api-status online">
+                    <span class="status-dot"></span>
+                    API Status
+                </div>
+            </div>
+        </header>
+
+        <!-- Hero Section -->
+        <section class="hero">
+            <h2 class="hero-title">Home Cluster Live Status</h2>
+            <p class="hero-description">
+                This cluster is built on Talos OS, with initial configurations generated using Talhelper. Following deployment,
+                Flux continuously monitors a git repository for changes, while Renovate handles automated dependency updates.
+            </p>
+            <div class="social-links">
+                <a href="https://github.com/rubengardenier/homelab-gitops" target="_blank" class="social-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M12 0c-6.626 0-12 5.373-12 12 0 5.302 3.438 9.8 8.207 11.387.599.111.793-.261.793-.577v-2.234c-3.338.726-4.033-1.416-4.033-1.416-.546-1.387-1.333-1.756-1.333-1.756-1.089-.745.083-.729.083-.729 1.205.084 1.839 1.237 1.839 1.237 1.07 1.834 2.807 1.304 3.492.997.107-.775.418-1.305.762-1.604-2.665-.305-5.467-1.334-5.467-5.931 0-1.311.469-2.381 1.236-3.221-.124-.303-.535-1.524.117-3.176 0 0 1.008-.322 3.301 1.23.957-.266 1.983-.399 3.003-.404 1.02.005 2.047.138 3.006.404 2.291-1.552 3.297-1.23 3.297-1.23.653 1.653.242 2.874.118 3.176.77.84 1.235 1.911 1.235 3.221 0 4.609-2.807 5.624-5.479 5.921.43.372.823 1.102.823 2.222v3.293c0 .319.192.694.801.576 4.765-1.589 8.199-6.086 8.199-11.386 0-6.627-5.373-12-12-12z"/>
+                    </svg>
+                </a>
+                <a href="https://linkedin.com/in/rubengardenier" target="_blank" class="social-link">
+                    <svg width="20" height="20" viewBox="0 0 24 24" fill="currentColor">
+                        <path d="M19 0h-14c-2.761 0-5 2.239-5 5v14c0 2.761 2.239 5 5 5h14c2.762 0 5-2.239 5-5v-14c0-2.761-2.238-5-5-5zm-11 19h-3v-11h3v11zm-1.5-12.268c-.966 0-1.75-.79-1.75-1.764s.784-1.764 1.75-1.764 1.75.79 1.75 1.764-.783 1.764-1.75 1.764zm13.5 12.268h-3v-5.604c0-3.368-4-3.113-4 0v5.604h-3v-11h3v1.765c1.396-2.586 7-2.777 7 2.476v6.759z"/>
+                    </svg>
+                </a>
+            </div>
+        </section>
+
+        <!-- Infrastructure Stack -->
+        <section class="section">
+            <h3 class="section-title">Infrastructure Stack</h3>
+            <div class="stack-grid">
+                <div class="stack-card" style="background: linear-gradient(135deg, #f97316, #ea580c);">
+                    <div class="stack-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="3" width="20" height="14" rx="2"/>
+                            <path d="M8 21h8M12 17v4"/>
+                        </svg>
+                    </div>
+                    <div class="stack-info">
+                        <span class="stack-label">OS</span>
+                        <span class="stack-value">k3s</span>
+                    </div>
+                </div>
+                <div class="stack-card" style="background: linear-gradient(135deg, #06b6d4, #0891b2);">
+                    <div class="stack-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M4 7v10c0 2 1 3 3 3h10c2 0 3-1 3-3V7c0-2-1-3-3-3H7c-2 0-3 1-3 3z"/>
+                            <path d="M9 12h6M12 9v6"/>
+                        </svg>
+                    </div>
+                    <div class="stack-info">
+                        <span class="stack-label">STORAGE</span>
+                        <span class="stack-value">NFS-CSI</span>
+                    </div>
+                </div>
+                <div class="stack-card" style="background: linear-gradient(135deg, #22c55e, #16a34a);">
+                    <div class="stack-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M5 12.55a11 11 0 0 1 14.08 0M1.42 9a16 16 0 0 1 21.16 0M8.53 16.11a6 6 0 0 1 6.95 0M12 20h.01"/>
+                        </svg>
+                    </div>
+                    <div class="stack-info">
+                        <span class="stack-label">INGRESS</span>
+                        <span class="stack-value">Cloudflare Tunnel</span>
+                    </div>
+                </div>
+                <div class="stack-card" style="background: linear-gradient(135deg, #a855f7, #9333ea);">
+                    <div class="stack-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <path d="M12 6v6l4 2"/>
+                        </svg>
+                    </div>
+                    <div class="stack-info">
+                        <span class="stack-label">GITOPS</span>
+                        <span class="stack-value">Flux CD</span>
+                    </div>
+                </div>
+                <div class="stack-card" style="background: linear-gradient(135deg, #ec4899, #db2777);">
+                    <div class="stack-icon">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M12 2L2 7l10 5 10-5-10-5zM2 17l10 5 10-5M2 12l10 5 10-5"/>
+                        </svg>
+                    </div>
+                    <div class="stack-info">
+                        <span class="stack-label">MONITORING</span>
+                        <span class="stack-value">Prometheus</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cluster Overview -->
+        <section class="section">
+            <h3 class="section-title">Cluster Overview</h3>
+            <div class="metrics-grid">
+                <div class="metric-card">
+                    <div class="metric-icon-box" style="background: rgba(59, 130, 246, 0.08); color: #3b82f6;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="4" y="4" width="16" height="16" rx="2"/>
+                            <path d="M9 9h6v6H9z"/>
+                        </svg>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-label">CPU USAGE</span>
+                        <span class="metric-value">1.24 cores</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon-box" style="background: rgba(34, 197, 94, 0.08); color: #22c55e;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <path d="M21 16V8a2 2 0 0 0-1-1.73l-7-4a2 2 0 0 0-2 0l-7 4A2 2 0 0 0 3 8v8a2 2 0 0 0 1 1.73l7 4a2 2 0 0 0 2 0l7-4A2 2 0 0 0 21 16z"/>
+                        </svg>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-label">RUNNING PODS</span>
+                        <span class="metric-value">24</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon-box" style="background: rgba(249, 115, 22, 0.08); color: #f97316;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-label">SERVICES</span>
+                        <span class="metric-value">12</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon-box" style="background: rgba(168, 85, 247, 0.08); color: #a855f7;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <ellipse cx="12" cy="5" rx="9" ry="3"/>
+                            <path d="M21 12c0 1.66-4 3-9 3s-9-1.34-9-3"/>
+                            <path d="M3 5v14c0 1.66 4 3 9 3s9-1.34 9-3V5"/>
+                        </svg>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-label">MEMORY USAGE</span>
+                        <span class="metric-value">4.2 GB</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon-box" style="background: rgba(6, 182, 212, 0.08); color: #06b6d4;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <circle cx="12" cy="12" r="10"/>
+                            <line x1="2" y1="12" x2="22" y2="12"/>
+                            <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1-4-10 15.3 15.3 0 0 1 4-10z"/>
+                        </svg>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-label">HTTP ROUTES</span>
+                        <span class="metric-value">8</span>
+                    </div>
+                </div>
+                <div class="metric-card">
+                    <div class="metric-icon-box" style="background: rgba(236, 72, 153, 0.08); color: #ec4899;">
+                        <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <rect x="2" y="6" width="20" height="12" rx="2"/>
+                            <path d="M6 12h4M14 12h4"/>
+                        </svg>
+                    </div>
+                    <div class="metric-info">
+                        <span class="metric-label">GATEWAYS</span>
+                        <span class="metric-value">2</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Cluster Nodes -->
+        <section class="section">
+            <!-- Control Plane Nodes -->
+            <div class="nodes-section">
+                <div class="nodes-header" onclick="toggleSection('control-plane')">
+                    <div class="nodes-header-left">
+                        <svg class="chevron" id="chevron-control-plane" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                        <h3 class="section-title">Control Plane</h3>
+                    </div>
+                    <span class="node-count">1 node</span>
+                </div>
+                <div class="nodes-content expanded" id="content-control-plane">
+                    <div class="nodes-grid">
+                        <div class="node-card">
+                            <div class="node-header">
+                                <div class="node-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="3" width="20" height="14" rx="2"/>
+                                        <path d="M8 21h8M12 17v4"/>
+                                    </svg>
+                                </div>
+                                <div class="node-title">
+                                    <span class="node-name">stardust-master</span>
+                                    <span class="node-role control-plane">CONTROL PLANE</span>
+                                </div>
+                                <span class="node-status ready">READY</span>
+                            </div>
+                            <div class="node-metrics">
+                                <div class="node-metric">
+                                    <div class="metric-header">
+                                        <span>CPU Usage</span>
+                                        <span>28.3%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill cpu" style="width: 28.3%"></div>
+                                    </div>
+                                </div>
+                                <div class="node-metric">
+                                    <div class="metric-header">
+                                        <span>Memory Usage</span>
+                                        <span>62.1%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill memory" style="width: 62.1%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="node-specs">
+                                <div class="spec">
+                                    <span class="spec-label">CPU:</span>
+                                    <span class="spec-value">4</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-label">MEMORY:</span>
+                                    <span class="spec-value">8Gi</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-label">PODS:</span>
+                                    <span class="spec-value">18</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Worker Nodes -->
+            <div class="nodes-section">
+                <div class="nodes-header" onclick="toggleSection('workers')">
+                    <div class="nodes-header-left">
+                        <svg class="chevron" id="chevron-workers" width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                            <polyline points="6 9 12 15 18 9"></polyline>
+                        </svg>
+                        <h3 class="section-title">Worker Nodes</h3>
+                    </div>
+                    <span class="node-count">3 nodes</span>
+                </div>
+                <div class="nodes-content expanded" id="content-workers">
+                    <div class="nodes-grid">
+                        <!-- Worker 1 -->
+                        <div class="node-card">
+                            <div class="node-header">
+                                <div class="node-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="3" width="20" height="14" rx="2"/>
+                                        <path d="M8 21h8M12 17v4"/>
+                                    </svg>
+                                </div>
+                                <div class="node-title">
+                                    <span class="node-name">stardust-worker-1</span>
+                                    <span class="node-role worker">WORKER</span>
+                                </div>
+                                <span class="node-status ready">READY</span>
+                            </div>
+                            <div class="node-metrics">
+                                <div class="node-metric">
+                                    <div class="metric-header">
+                                        <span>CPU Usage</span>
+                                        <span>45.2%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill cpu" style="width: 45.2%"></div>
+                                    </div>
+                                </div>
+                                <div class="node-metric">
+                                    <div class="metric-header">
+                                        <span>Memory Usage</span>
+                                        <span>71.8%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill memory" style="width: 71.8%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="node-specs">
+                                <div class="spec">
+                                    <span class="spec-label">CPU:</span>
+                                    <span class="spec-value">4</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-label">MEMORY:</span>
+                                    <span class="spec-value">16Gi</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-label">PODS:</span>
+                                    <span class="spec-value">32</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Worker 2 -->
+                        <div class="node-card">
+                            <div class="node-header">
+                                <div class="node-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="3" width="20" height="14" rx="2"/>
+                                        <path d="M8 21h8M12 17v4"/>
+                                    </svg>
+                                </div>
+                                <div class="node-title">
+                                    <span class="node-name">stardust-worker-2</span>
+                                    <span class="node-role worker">WORKER</span>
+                                </div>
+                                <span class="node-status ready">READY</span>
+                            </div>
+                            <div class="node-metrics">
+                                <div class="node-metric">
+                                    <div class="metric-header">
+                                        <span>CPU Usage</span>
+                                        <span>22.7%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill cpu" style="width: 22.7%"></div>
+                                    </div>
+                                </div>
+                                <div class="node-metric">
+                                    <div class="metric-header">
+                                        <span>Memory Usage</span>
+                                        <span>48.3%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill memory" style="width: 48.3%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="node-specs">
+                                <div class="spec">
+                                    <span class="spec-label">CPU:</span>
+                                    <span class="spec-value">4</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-label">MEMORY:</span>
+                                    <span class="spec-value">16Gi</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-label">PODS:</span>
+                                    <span class="spec-value">28</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <!-- Worker 3 - Not Ready example -->
+                        <div class="node-card">
+                            <div class="node-header">
+                                <div class="node-icon">
+                                    <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                        <rect x="2" y="3" width="20" height="14" rx="2"/>
+                                        <path d="M8 21h8M12 17v4"/>
+                                    </svg>
+                                </div>
+                                <div class="node-title">
+                                    <span class="node-name">stardust-worker-3</span>
+                                    <span class="node-role worker">WORKER</span>
+                                </div>
+                                <span class="node-status not-ready">NOT READY</span>
+                            </div>
+                            <div class="node-metrics">
+                                <div class="node-metric">
+                                    <div class="metric-header">
+                                        <span>CPU Usage</span>
+                                        <span>0%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill cpu" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                                <div class="node-metric">
+                                    <div class="metric-header">
+                                        <span>Memory Usage</span>
+                                        <span>0%</span>
+                                    </div>
+                                    <div class="progress-bar">
+                                        <div class="progress-fill memory" style="width: 0%"></div>
+                                    </div>
+                                </div>
+                            </div>
+                            <div class="node-specs">
+                                <div class="spec">
+                                    <span class="spec-label">CPU:</span>
+                                    <span class="spec-value">2</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-label">MEMORY:</span>
+                                    <span class="spec-value">8Gi</span>
+                                </div>
+                                <div class="spec">
+                                    <span class="spec-label">PODS:</span>
+                                    <span class="spec-value">0</span>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Footer -->
+        <footer class="footer">
+            <p>Last updated: <span id="last-updated">Just now</span></p>
+        </footer>
+    </div>
+
+    <script>
+        function toggleSection(sectionId) {
+            const content = document.getElementById('content-' + sectionId);
+            const chevron = document.getElementById('chevron-' + sectionId);
+
+            content.classList.toggle('expanded');
+            content.classList.toggle('collapsed');
+            chevron.classList.toggle('rotated');
+        }
+    </script>
+</body>
+</html>
