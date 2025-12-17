@@ -15,20 +15,11 @@ spec:
       labels:
         app: openwebui
     spec:
-      securityContext:
-        fsGroup: 1000
-        runAsUser: 1000
-        runAsGroup: 1000
-
       containers:
         - name: openwebui
           image: ghcr.io/open-webui/open-webui:v0.6.41
           ports:
             - containerPort: 8080
-
-          securityContext:
-            allowPrivilegeEscalation: false
-            runAsNonRoot: true
 
           resources:
             requests:
