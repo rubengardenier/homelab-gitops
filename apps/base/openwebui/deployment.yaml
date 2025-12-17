@@ -32,6 +32,8 @@ spec:
           env:
             - name: WEBUI_AUTH
               value: "true"
+            - name: WEBUI_SECRET_KEY
+              value: "t0p-s3cr3t-k3y-ch4ng3-m3-l4t3r"
 
           volumeMounts:
             - name: data
