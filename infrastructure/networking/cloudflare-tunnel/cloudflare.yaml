@@ -64,11 +64,11 @@ data:
 
     ingress:
       - hostname: linkding.homekube.dev
-        service: http://linkding.linkding:9090
+        service: http://linkding.linkding.svc.cluster.local:9090
       - hostname: mealie.homekube.dev
-        service: http://mealie.mealie:9000
+        service: http://mealie.mealie.svc.cluster.local:9000
       - hostname: n8n.homekube.dev
-        service: http://n8n-service.n8n:80
+        service: http://n8n-service.n8n.svc.cluster.local:80
       - hostname: wallabag.homekube.dev
-        service: http://wallabag.wallabag:80
+        service: http://wallabag.wallabag.svc.cluster.local:80
       - service: http_status:404
