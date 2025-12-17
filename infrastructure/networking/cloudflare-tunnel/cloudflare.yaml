@@ -80,6 +80,8 @@ data:
         service: http://10.103.210.21:9000
       - hostname: n8n.homekube.dev
         service: http://10.108.98.115:80
+      - hostname: openwebui.homekube.dev
+        service: http://10.96.116.68:8080
       - hostname: wallabag.homekube.dev
         service: http://10.104.212.208:80
       - service: http_status:404
