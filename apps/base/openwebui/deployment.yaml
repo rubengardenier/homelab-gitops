@@ -1,0 +1,52 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: openwebui
+  namespace: openwebui
+  labels:
+    app: openwebui
+spec:
+  replicas: 1
+  selector:
+    matchLabels:
+      app: openwebui
+  template:
+    metadata:
+      labels:
+        app: openwebui
+    spec:
+      securityContext:
+        fsGroup: 1000
+        runAsUser: 1000
+        runAsGroup: 1000
+
+      containers:
+        - name: openwebui
+          image: ghcr.io/open-webui/open-webui:v0.6.41
+          ports:
+            - containerPort: 8080
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1000m"
+              memory: "2048Mi"
+
+          env:
+            - name: WEBUI_AUTH
+              value: "true"
+
+          volumeMounts:
+            - name: data
+              mountPath: /app/backend/data
+
+      volumes:
+        - name: data
+          persistentVolumeClaim:
+            claimName: openwebui
