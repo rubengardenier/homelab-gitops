@@ -7,6 +7,11 @@ metadata:
     app: openwebui
 spec:
   replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxSurge: 1
+      maxUnavailable: 0
   selector:
     matchLabels:
       app: openwebui
@@ -15,25 +20,69 @@ spec:
       labels:
         app: openwebui
     spec:
+      securityContext:
+        runAsNonRoot: true
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+        seccompProfile:
+          type: RuntimeDefault
       containers:
         - name: openwebui
           image: ghcr.io/open-webui/open-webui:v0.6.41
           ports:
             - containerPort: 8080
+              name: http
+
+          securityContext:
+            allowPrivilegeEscalation: false
+            readOnlyRootFilesystem: false
+            capabilities:
+              drop:
+                - ALL
 
           resources:
             requests:
-              cpu: "100m"
-              memory: "256Mi"
+              cpu: "500m"
+              memory: "512Mi"
             limits:
-              cpu: "1000m"
-              memory: "2048Mi"
+              cpu: "2000m"
+              memory: "3Gi"
 
           env:
             - name: WEBUI_AUTH
               value: "true"
             - name: WEBUI_SECRET_KEY
-              value: "t0p-s3cr3t-k3y-ch4ng3-m3-l4t3r"
+              valueFrom:
+                secretKeyRef:
+                  name: openwebui-secrets
+                  key: secret-key
+            - name: ENABLE_SIGNUP
+              value: "false"
+            - name: SAFE_MODE
+              value: "true"
+            - name: WEBUI_SESSION_COOKIE_SECURE
+              value: "true"
+            - name: WEBUI_SESSION_COOKIE_SAME_SITE
+              value: "strict"
+
+          livenessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 180
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+
+          readinessProbe:
+            httpGet:
+              path: /health
+              port: http
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
 
           volumeMounts:
             - name: data
