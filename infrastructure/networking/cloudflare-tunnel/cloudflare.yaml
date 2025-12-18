@@ -74,11 +74,11 @@ data:
 
     ingress:
       - hostname: linkding.homekube.dev
-        service: http://10.109.181.72:9090
+        service: http://linkding.linkding.svc.cluster.local:9090
       - hostname: mealie.homekube.dev
-        service: http://10.103.210.21:9000
+        service: http://mealie.mealie.svc.cluster.local:9000
       - hostname: n8n.homekube.dev
-        service: http://10.108.98.115:80
+        service: http://n8n-service.n8n.svc.cluster.local:80
       - hostname: openwebui.homekube.dev
-        service: http://10.96.116.68:8080
+        service: http://openwebui.openwebui.svc.cluster.local:8080
       - service: http_status:404
