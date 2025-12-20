@@ -1,0 +1,16 @@
+# Worker 2 specific patches
+
+machine:
+  # Install disk configuration
+  install:
+    disk: /dev/nvme0n1
+    wipe: false
+
+  # Network configuration
+  network:
+    hostname: talos-worker-2
+
+  # Kubelet configuration
+  kubelet:
+    extraArgs:
+      rotate-server-certificates: "true"

@@ -1,11 +1,14 @@
-# Worker node specific patches
-# Add your customizations here
+# Worker 1 specific patches
 
 machine:
   # Install disk configuration
   install:
     disk: /dev/nvme0n1
     wipe: false
+
+  # Network configuration
+  network:
+    hostname: talos-worker-1
 
   # Kubelet configuration
   kubelet:

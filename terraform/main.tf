@@ -24,8 +24,10 @@ data "talos_machine_configuration" "controlplane" {
   ]
 }
 
-# Worker Machine Configuration
+# Worker Machine Configurations (one per worker for unique hostnames)
 data "talos_machine_configuration" "worker" {
+  for_each = { for idx, ip in var.worker_nodes : ip => idx + 1 }
+
   cluster_name     = var.cluster_name
   cluster_endpoint = var.cluster_endpoint
   machine_type     = "worker"
@@ -35,7 +37,7 @@ data "talos_machine_configuration" "worker" {
   kubernetes_version = var.kubernetes_version
 
   config_patches = [
-    file("${path.module}/patches/worker.yaml")
+    file("${path.module}/patches/worker-${each.value}.yaml")
   ]
 }
 
@@ -54,12 +56,12 @@ resource "talos_machine_configuration_apply" "controlplane" {
 
 # Apply configuration to worker nodes
 resource "talos_machine_configuration_apply" "worker" {
-  for_each = toset(var.worker_nodes)
+  for_each = { for idx, ip in var.worker_nodes : ip => idx + 1 }
 
   client_configuration        = talos_machine_secrets.this.client_configuration
-  machine_configuration_input = data.talos_machine_configuration.worker.machine_configuration
-  node                        = each.value
-  endpoint                    = each.value
+  machine_configuration_input = data.talos_machine_configuration.worker[each.key].machine_configuration
+  node                        = each.key
+  endpoint                    = each.key
 
   # Use insecure mode for initial apply to nodes in maintenance mode
   apply_mode = "reboot"
