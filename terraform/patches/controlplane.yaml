@@ -8,9 +8,9 @@ machine:
       enabled: true
       port: 7445
 
-  # Install disk configuration (adjust as needed)
+  # Install disk configuration
   install:
-    disk: /dev/sda
+    disk: /dev/nvme0n1
     wipe: false
 
   # Network configuration
