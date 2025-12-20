@@ -1,0 +1,17 @@
+# Copy this file to terraform.tfvars and fill in your values
+# terraform.tfvars is gitignored and will NOT be committed
+
+cluster_name     = "talos-cluster"
+cluster_endpoint = "https://10.0.0.10:6443"
+
+controlplane_nodes = [
+  "10.0.0.10",
+]
+
+worker_nodes = [
+  "10.0.0.11",
+  "10.0.0.12",
+]
+
+talos_version      = "v1.11.0"
+kubernetes_version = "1.32.1"

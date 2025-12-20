@@ -1,0 +1,13 @@
+# Worker node specific patches
+# Add your customizations here
+
+machine:
+  # Install disk configuration (adjust as needed)
+  install:
+    disk: /dev/sda
+    wipe: false
+
+  # Kubelet configuration
+  kubelet:
+    extraArgs:
+      rotate-server-certificates: "true"
