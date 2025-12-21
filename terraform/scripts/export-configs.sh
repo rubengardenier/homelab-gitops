@@ -7,11 +7,11 @@ PROJECT_DIR="$(dirname "$SCRIPT_DIR")"
 cd "$PROJECT_DIR"
 
 echo "Exporting talosconfig..."
-terraform output -raw talosconfig > talosconfig
+terraform output -raw talosconfig | tee talosconfig > /dev/null
 chmod 600 talosconfig
 
 echo "Exporting kubeconfig..."
-terraform output -raw kubeconfig > kubeconfig
+terraform output -raw kubeconfig | tee kubeconfig > /dev/null
 chmod 600 kubeconfig
 
 echo ""
