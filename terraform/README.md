@@ -46,13 +46,6 @@ cp terraform.tfvars.example terraform.tfvars
 nano terraform.tfvars
 ```
 
-Fill in your IP addresses:
-```hcl
-cluster_endpoint   = "https://192.168.1.152:6443"
-controlplane_nodes = ["192.168.1.152"]
-worker_nodes       = ["192.168.1.150", "192.168.1.151"]
-```
-
 ### Step 3: Run Terraform
 
 ```bash
@@ -99,9 +92,7 @@ If you still have a working `talosconfig` that matches the nodes:
 
 ```bash
 # Reset all nodes to maintenance mode
-talosctl --talosconfig ./talosconfig reset --graceful=false --reboot --nodes 192.168.1.152
-talosctl --talosconfig ./talosconfig reset --graceful=false --reboot --nodes 192.168.1.150
-talosctl --talosconfig ./talosconfig reset --graceful=false --reboot --nodes 192.168.1.151
+talosctl --talosconfig ./talosconfig reset --graceful=false --reboot --nodes <NODE_IP>
 
 # Wait until they're in maintenance mode, then:
 rm terraform.tfstate terraform.tfstate.backup talosconfig kubeconfig
@@ -142,9 +133,6 @@ If certificates don't match (e.g., after losing terraform state):
    ```
 
 2. **Add IP to terraform.tfvars**
-   ```hcl
-   worker_nodes = ["192.168.1.150", "192.168.1.151", "192.168.1.153"]
-   ```
 
 3. **Boot new machine from Talos ISO**
 
@@ -166,44 +154,17 @@ These files are in `.gitignore` and contain sensitive data:
 
 **Tip:** Back up `terraform.tfstate` and `talosconfig` to a secure location!
 
-## Troubleshooting
-
-### Certificate mismatch error
-
-```
-tls: failed to verify certificate: x509: certificate signed by unknown authority
-```
-
-**Cause:** The talosconfig doesn't match the certificates on the nodes.
-
-**Solution:** Boot nodes from Talos ISO, remove terraform state, apply again.
-
-### Node not reachable on port 50000
-
-**Check:** Is the node in maintenance mode or installed?
-```bash
-# Test connectivity
-nc -z -w 2 192.168.1.152 50000
-```
-
-**Maintenance mode:** Accepts connections without certificates
-**Installed:** Requires correct talosconfig
-
-### Terraform timeout during apply
-
-Nodes reboot after configuration. This can take 5-10 minutes. Wait patiently or check the console of the machines.
-
 ## Useful Commands
 
 ```bash
 # Check Talos version
-talosctl --talosconfig ./talosconfig version --nodes 192.168.1.152
+talosctl --talosconfig ./talosconfig version
 
 # View logs
-talosctl --talosconfig ./talosconfig logs kubelet --nodes 192.168.1.152
+talosctl --talosconfig ./talosconfig logs kubelet
 
 # Services status
-talosctl --talosconfig ./talosconfig services --nodes 192.168.1.152
+talosctl --talosconfig ./talosconfig services
 
 # Cluster health
 talosctl --talosconfig ./talosconfig health
@@ -212,5 +173,5 @@ talosctl --talosconfig ./talosconfig health
 KUBECONFIG=./kubeconfig kubectl get nodes -o wide
 
 # Upgrade Talos
-talosctl --talosconfig ./talosconfig upgrade --nodes 192.168.1.152 --image ghcr.io/siderolabs/installer:v1.11.0
+talosctl --talosconfig ./talosconfig upgrade --image ghcr.io/siderolabs/installer:v1.11.0
 ```
