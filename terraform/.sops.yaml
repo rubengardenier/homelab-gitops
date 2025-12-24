@@ -1,7 +1,7 @@
 creation_rules:
   # Encrypt tfvars files containing secrets
   - path_regex: \.tfvars$
-    age: age13vreyxm5ff3wu5agt3yfswlvc6a55k282uwa0wp8n7znd23ffsws354jyt
+    age: age194krt8q7cvkvl0vu7n6n3u8y8g8rxhr7h39ahzxvgy4hth3hcumqn6m8tt
   # Encrypt any yaml secrets
   - path_regex: secrets\.yaml$
-    age: age13vreyxm5ff3wu5agt3yfswlvc6a55k282uwa0wp8n7znd23ffsws354jyt
+    age: age194krt8q7cvkvl0vu7n6n3u8y8g8rxhr7h39ahzxvgy4hth3hcumqn6m8tt
