@@ -7,7 +7,7 @@ spec:
   instances: 1
   storage:
     size: 10Gi
-    storageClass: local-path
+    storageClass: nfs-csi
   bootstrap:
     initdb:
       database: n8n
