@@ -13,8 +13,14 @@ spec:
       labels:
         app: cloudflared
     spec:
-      dnsPolicy: ClusterFirst
+      dnsPolicy: None
       dnsConfig:
+        nameservers:
+          - 10.96.0.10
+        searches:
+          - networking.svc.cluster.local
+          - svc.cluster.local
+          - cluster.local
         options:
           - name: ndots
             value: "5"
