@@ -76,16 +76,17 @@ data:
     no-autoupdate: true
 
     ingress:
+      # Using ClusterIP addresses directly as workaround for DNS issues
       - hostname: linkding.homekube.dev
-        service: http://linkding.linkding.svc.cluster.local:9090
+        service: http://10.98.55.27:9090
       - hostname: mealie.homekube.dev
-        service: http://mealie.mealie.svc.cluster.local:9000
+        service: http://10.107.23.240:9000
       - hostname: n8n.homekube.dev
-        service: http://n8n-service.n8n.svc.cluster.local:80
+        service: http://10.105.90.19:80
       - hostname: nzbget.homekube.dev
-        service: http://nzbget.nzbget.svc.cluster.local:6789
+        service: http://10.108.99.170:6789
       - hostname: openwebui.homekube.dev
-        service: http://openwebui.openwebui.svc.cluster.local:8080
+        service: http://10.100.84.127:8080
       - hostname: radarr.homekube.dev
-        service: http://radarr.radarr.svc.cluster.local:7878
+        service: http://10.100.193.205:7878
       - service: http_status:404
