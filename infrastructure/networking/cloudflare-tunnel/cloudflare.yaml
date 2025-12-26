@@ -71,6 +71,10 @@ data:
         service: http://mealie.mealie.svc.cluster.local:9000
       - hostname: n8n.homekube.dev
         service: http://n8n-service.n8n.svc.cluster.local:80
+      - hostname: nzbget.homekube.dev
+        service: http://nzbget.nzbget.svc.cluster.local:6789
       - hostname: openwebui.homekube.dev
         service: http://openwebui.openwebui.svc.cluster.local:8080
+      - hostname: radarr.homekube.dev
+        service: http://radarr.radarr.svc.cluster.local:7878
       - service: http_status:404
