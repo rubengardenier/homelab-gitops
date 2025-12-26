@@ -13,6 +13,11 @@ spec:
       labels:
         app: cloudflared
     spec:
+      dnsPolicy: ClusterFirst
+      dnsConfig:
+        options:
+          - name: ndots
+            value: "5"
       containers:
       - name: cloudflared
         image: cloudflare/cloudflared
