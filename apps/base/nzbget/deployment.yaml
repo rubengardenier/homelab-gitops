@@ -32,8 +32,7 @@ spec:
               value: "Europe/Amsterdam"
 
           livenessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: 6789
             initialDelaySeconds: 30
             periodSeconds: 10
@@ -41,8 +40,7 @@ spec:
             failureThreshold: 3
 
           readinessProbe:
-            httpGet:
-              path: /
+            tcpSocket:
               port: 6789
             initialDelaySeconds: 15
             periodSeconds: 10
