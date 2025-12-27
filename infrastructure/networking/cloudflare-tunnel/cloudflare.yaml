@@ -83,10 +83,6 @@ data:
         service: http://10.107.23.240:9000
       - hostname: n8n.homekube.dev
         service: http://10.105.90.19:80
-      - hostname: nzbget.homekube.dev
-        service: http://10.108.99.170:6789
       - hostname: openwebui.homekube.dev
         service: http://10.100.84.127:8080
-      - hostname: radarr.homekube.dev
-        service: http://10.100.193.205:7878
       - service: http_status:404
