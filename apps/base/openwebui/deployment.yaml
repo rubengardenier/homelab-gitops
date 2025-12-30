@@ -65,6 +65,13 @@ spec:
               value: "true"
             - name: WEBUI_SESSION_COOKIE_SAME_SITE
               value: "strict"
+            # Fix for non-root user - set writable paths for NLTK and other data
+            - name: HOME
+              value: "/app/backend/data"
+            - name: NLTK_DATA
+              value: "/app/backend/data/nltk_data"
+            - name: HF_HOME
+              value: "/app/backend/data/huggingface"
 
           livenessProbe:
             httpGet:
