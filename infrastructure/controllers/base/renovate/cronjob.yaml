@@ -12,7 +12,7 @@ spec:
         spec:
           containers:
             - name: renovate
-              image: renovate/renovate:42.66.14
+              image: renovate/renovate:42.69.0
               args:
                 - rubengardenier/homelab-gitops
 
