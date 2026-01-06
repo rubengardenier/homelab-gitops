@@ -400,6 +400,170 @@
             content.classList.toggle('collapsed');
             chevron.classList.toggle('rotated');
         }
+
+        // Format bytes to human readable
+        function formatMemory(bytes) {
+            if (!bytes) return '--';
+            const gb = bytes / (1024 * 1024 * 1024);
+            if (gb >= 1) return gb.toFixed(1) + ' GB';
+            const mb = bytes / (1024 * 1024);
+            return mb.toFixed(0) + ' MB';
+        }
+
+        // Format CPU cores
+        function formatCPU(millicores) {
+            if (!millicores) return '--';
+            return (millicores / 1000).toFixed(2) + ' cores';
+        }
+
+        // Parse Kubernetes memory string (e.g., "16Gi", "1234Ki")
+        function parseK8sMemory(memStr) {
+            if (!memStr) return 0;
+            const match = memStr.match(/^(\d+)(\w+)?$/);
+            if (!match) return 0;
+            const value = parseInt(match[1]);
+            const unit = match[2] || '';
+            const multipliers = {
+                '': 1, 'Ki': 1024, 'Mi': 1024*1024, 'Gi': 1024*1024*1024,
+                'K': 1000, 'M': 1000000, 'G': 1000000000
+            };
+            return value * (multipliers[unit] || 1);
+        }
+
+        // Parse Kubernetes CPU string (e.g., "500m", "2")
+        function parseK8sCPU(cpuStr) {
+            if (!cpuStr) return 0;
+            if (cpuStr.endsWith('n')) return parseInt(cpuStr) / 1000000;
+            if (cpuStr.endsWith('m')) return parseInt(cpuStr);
+            return parseInt(cpuStr) * 1000;
+        }
+
+        // Update API status indicator
+        function setApiStatus(online) {
+            const statusEl = document.querySelector('.api-status');
+            if (online) {
+                statusEl.classList.add('online');
+                statusEl.classList.remove('offline');
+            } else {
+                statusEl.classList.remove('online');
+                statusEl.classList.add('offline');
+            }
+        }
+
+        // Create node card HTML
+        function createNodeCard(node) {
+            const cpuPercent = node.cpuPercent || 0;
+            const memPercent = node.memoryPercent || 0;
+            const cpuUsage = node.cpuUsage ? formatCPU(parseK8sCPU(node.cpuUsage)) : '--';
+            const memUsage = node.memoryUsage ? formatMemory(parseK8sMemory(node.memoryUsage)) : '--';
+            const roleClass = node.role === 'control-plane' ? 'control-plane' : 'worker';
+            const roleLabel = node.role === 'control-plane' ? 'CONTROL PLANE' : 'WORKER';
+            const statusClass = node.status === 'Ready' ? 'ready' : 'not-ready';
+
+            return `
+                <div class="node-card">
+                    <div class="node-header">
+                        <div class="node-icon">
+                            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+                                <rect x="2" y="3" width="20" height="14" rx="2"/>
+                                <path d="M8 21h8M12 17v4"/>
+                            </svg>
+                        </div>
+                        <div class="node-title">
+                            <span class="node-name">${node.name}</span>
+                            <span class="node-role ${roleClass}">${roleLabel}</span>
+                        </div>
+                        <span class="node-status ${statusClass}">${node.status.toUpperCase()}</span>
+                    </div>
+                    <div class="node-metrics">
+                        <div class="node-metric">
+                            <div class="metric-header">
+                                <span>CPU Usage</span>
+                                <span>${cpuUsage}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill cpu" style="width: ${cpuPercent.toFixed(1)}%"></div>
+                            </div>
+                        </div>
+                        <div class="node-metric">
+                            <div class="metric-header">
+                                <span>Memory Usage</span>
+                                <span>${memUsage}</span>
+                            </div>
+                            <div class="progress-bar">
+                                <div class="progress-fill memory" style="width: ${memPercent.toFixed(1)}%"></div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="node-specs">
+                        <div class="spec">
+                            <span class="spec-label">CPU:</span>
+                            <span class="spec-value">${node.cpuCores}</span>
+                        </div>
+                        <div class="spec">
+                            <span class="spec-label">MEMORY:</span>
+                            <span class="spec-value">${node.memoryTotal}</span>
+                        </div>
+                        <div class="spec">
+                            <span class="spec-label">IP:</span>
+                            <span class="spec-value">${node.ip}</span>
+                        </div>
+                    </div>
+                </div>
+            `;
+        }
+
+        // Fetch and update dashboard data
+        async function fetchDashboardData() {
+            try {
+                const response = await fetch('/api/cluster');
+                if (!response.ok) throw new Error('API request failed');
+
+                const data = await response.json();
+                setApiStatus(true);
+
+                // Update cluster stats
+                document.querySelector('.metric-card:nth-child(2) .metric-value').textContent = data.stats.runningPods;
+                document.querySelector('.metric-card:nth-child(3) .metric-value').textContent = data.stats.totalServices;
+
+                // Calculate total CPU and memory usage
+                let totalCpuUsage = 0;
+                let totalMemUsage = 0;
+                data.nodes.forEach(node => {
+                    if (node.cpuUsage) totalCpuUsage += parseK8sCPU(node.cpuUsage);
+                    if (node.memoryUsage) totalMemUsage += parseK8sMemory(node.memoryUsage);
+                });
+                document.querySelector('.metric-card:nth-child(1) .metric-value').textContent = formatCPU(totalCpuUsage);
+                document.querySelector('.metric-card:nth-child(4) .metric-value').textContent = formatMemory(totalMemUsage);
+
+                // Separate nodes by role
+                const controlPlaneNodes = data.nodes.filter(n => n.role === 'control-plane');
+                const workerNodes = data.nodes.filter(n => n.role === 'worker');
+
+                // Update control plane section
+                const cpGrid = document.querySelector('#content-control-plane .nodes-grid');
+                cpGrid.innerHTML = controlPlaneNodes.map(createNodeCard).join('');
+                document.querySelector('#content-control-plane').closest('.nodes-section').querySelector('.node-count').textContent =
+                    `${controlPlaneNodes.length} node${controlPlaneNodes.length !== 1 ? 's' : ''}`;
+
+                // Update workers section
+                const workerGrid = document.querySelector('#content-workers .nodes-grid');
+                workerGrid.innerHTML = workerNodes.map(createNodeCard).join('');
+                document.querySelector('#content-workers').closest('.nodes-section').querySelector('.node-count').textContent =
+                    `${workerNodes.length} node${workerNodes.length !== 1 ? 's' : ''}`;
+
+                // Update last updated timestamp
+                document.getElementById('last-updated').textContent = new Date().toLocaleTimeString();
+
+            } catch (error) {
+                console.error('Failed to fetch dashboard data:', error);
+                setApiStatus(false);
+            }
+        }
+
+        // Initial fetch and periodic refresh
+        fetchDashboardData();
+        setInterval(fetchDashboardData, 30000); // Refresh every 30 seconds
     </script>
 </body>
 </html>

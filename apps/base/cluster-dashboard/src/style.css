@@ -137,13 +137,21 @@ body {
     color: var(--text-secondary);
 }
 
-.api-status.online .status-dot {
+.api-status .status-dot {
     width: 8px;
     height: 8px;
-    background: var(--color-success);
     border-radius: 50%;
+}
+
+.api-status.online .status-dot {
+    background: var(--color-success);
     box-shadow: 0 0 10px var(--color-success);
     animation: pulse 2s ease-in-out infinite;
+}
+
+.api-status.offline .status-dot {
+    background: var(--color-danger);
+    box-shadow: 0 0 10px var(--color-danger);
 }
 
 @keyframes pulse {

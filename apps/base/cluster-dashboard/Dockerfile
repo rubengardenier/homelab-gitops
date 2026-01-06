@@ -1,19 +1,42 @@
-FROM nginx:alpine
+# Build stage for Go backend
+FROM golang:1.22-alpine AS builder
 
-# Copy custom nginx config
-COPY nginx.conf /etc/nginx/conf.d/default.conf
+WORKDIR /app
 
-# Copy static files to nginx html directory
-COPY src/ /usr/share/nginx/html/
+# Copy go mod files
+COPY backend/go.mod backend/go.sum* ./
+RUN go mod download
 
-# Use non-root user for security
-RUN chown -R nginx:nginx /usr/share/nginx/html && \
-    chmod -R 755 /usr/share/nginx/html
+# Copy source code
+COPY backend/*.go ./
 
-# Expose port 80
-EXPOSE 80
+# Build the binary
+RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o server .
 
-# Run as non-root user
-USER nginx
+# Final stage
+FROM alpine:3.19
 
-CMD ["nginx", "-g", "daemon off;"]
+# Install ca-certificates for HTTPS
+RUN apk --no-cache add ca-certificates
+
+WORKDIR /app
+
+# Copy binary from builder
+COPY --from=builder /app/server .
+
+# Copy static files
+COPY src/ ./static/
+
+# Create non-root user
+RUN adduser -D -u 1000 appuser && \
+    chown -R appuser:appuser /app
+
+USER appuser
+
+# Environment variables
+ENV PORT=8080
+ENV STATIC_DIR=/app/static
+
+EXPOSE 8080
+
+CMD ["./server"]
