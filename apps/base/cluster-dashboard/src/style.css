@@ -60,6 +60,46 @@ body {
     gap: 1rem;
 }
 
+/* User Avatar */
+.user-avatar {
+    position: relative;
+    width: 48px;
+    height: 48px;
+    flex-shrink: 0;
+}
+
+.user-avatar img {
+    width: 48px;
+    height: 48px;
+    border-radius: 50%;
+    object-fit: cover;
+    border: 2px solid var(--border-color);
+    transition: border-color var(--transition-base);
+}
+
+.user-avatar:hover img {
+    border-color: var(--color-primary);
+}
+
+.avatar-status {
+    position: absolute;
+    bottom: 2px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    border-radius: 50%;
+    border: 2px solid var(--bg-primary);
+}
+
+.avatar-status.online {
+    background: var(--color-success);
+    box-shadow: 0 0 8px var(--color-success);
+}
+
+.avatar-status.offline {
+    background: var(--text-muted);
+}
+
 .logo {
     width: 48px;
     height: 48px;
