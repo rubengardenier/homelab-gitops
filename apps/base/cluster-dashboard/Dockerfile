@@ -3,12 +3,12 @@ FROM golang:1.25-alpine AS builder
 
 WORKDIR /app
 
-# Copy go mod files
-COPY backend/go.mod backend/go.sum* ./
-RUN go mod download
-
-# Copy source code
+# Copy go mod and source files
+COPY backend/go.mod ./
 COPY backend/*.go ./
+
+# Download dependencies
+RUN go mod tidy && go mod download
 
 # Build the binary
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o server .
