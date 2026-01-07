@@ -436,7 +436,7 @@ body {
 
 .nodes-content.expanded {
     max-height: 2000px;
-    padding: 0 0 1.5rem 0;
+    padding: 0 1.5rem 1.5rem 1.5rem;
 }
 
 .nodes-content.collapsed {

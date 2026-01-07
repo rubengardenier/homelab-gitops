@@ -243,17 +243,27 @@ func healthHandler(w http.ResponseWriter, r *http.Request) {
 	w.Write([]byte("OK"))
 }
 
+// noCacheFileServer wraps http.FileServer to add cache-control headers
+func noCacheFileServer(fs http.Handler) http.Handler {
+	return http.HandlerFunc(func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Cache-Control", "no-cache, no-store, must-revalidate")
+		w.Header().Set("Pragma", "no-cache")
+		w.Header().Set("Expires", "0")
+		fs.ServeHTTP(w, r)
+	})
+}
+
 func main() {
 	// API endpoints
 	http.HandleFunc("/api/cluster", apiHandler)
 	http.HandleFunc("/health", healthHandler)
 
-	// Serve static files
+	// Serve static files with no-cache headers
 	staticDir := os.Getenv("STATIC_DIR")
 	if staticDir == "" {
 		staticDir = "./static"
 	}
-	http.Handle("/", http.FileServer(http.Dir(staticDir)))
+	http.Handle("/", noCacheFileServer(http.FileServer(http.Dir(staticDir))))
 
 	port := os.Getenv("PORT")
 	if port == "" {
