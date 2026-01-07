@@ -185,11 +185,13 @@ func getVersions(ctx context.Context) VersionInfo {
 		versions.Kubernetes = serverVersion.GitVersion
 	}
 
-	// Get Talos version from first node's label
+	// Get Talos version from first node's osImage (e.g., "Talos (v1.11.5)")
 	nodes, err := clientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
 	if err == nil && len(nodes.Items) > 0 {
-		if talosVersion, ok := nodes.Items[0].Labels["node.talos.dev/os-version"]; ok {
-			versions.Talos = talosVersion
+		osImage := nodes.Items[0].Status.NodeInfo.OSImage
+		// osImage format: "Talos (v1.11.5)" - extract just the version
+		if osImage != "" {
+			versions.Talos = osImage
 		}
 	}
 
