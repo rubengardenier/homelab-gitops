@@ -65,7 +65,7 @@
                     </div>
                     <div class="stack-info">
                         <span class="stack-label">OS</span>
-                        <span class="stack-value">Talos v1.11</span>
+                        <span class="stack-value" id="talos-version">Talos</span>
                     </div>
                 </div>
                 <div class="stack-card" style="background: linear-gradient(135deg, #326ce5, #1e40af);">
@@ -534,6 +534,16 @@
 
                 const data = await response.json();
                 setApiStatus(true);
+
+                // Update version info
+                if (data.versions) {
+                    if (data.versions.talos) {
+                        document.getElementById('talos-version').textContent = 'Talos ' + data.versions.talos;
+                    }
+                    if (data.versions.kubernetes) {
+                        document.getElementById('k8s-version').textContent = data.versions.kubernetes;
+                    }
+                }
 
                 // Update cluster stats
                 document.querySelector('.metric-card:nth-child(2) .metric-value').textContent = data.stats.runningPods;

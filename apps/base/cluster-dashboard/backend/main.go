@@ -36,10 +36,16 @@ type ClusterStats struct {
 	ReadyNodes    int `json:"readyNodes"`
 }
 
+type VersionInfo struct {
+	Kubernetes string `json:"kubernetes"`
+	Talos      string `json:"talos"`
+}
+
 type DashboardData struct {
-	Nodes   []NodeInfo   `json:"nodes"`
-	Stats   ClusterStats `json:"stats"`
-	Updated string       `json:"updated"`
+	Nodes    []NodeInfo   `json:"nodes"`
+	Stats    ClusterStats `json:"stats"`
+	Versions VersionInfo  `json:"versions"`
+	Updated  string       `json:"updated"`
 }
 
 var (
@@ -170,6 +176,26 @@ func getNodes(ctx context.Context) ([]NodeInfo, error) {
 	return result, nil
 }
 
+func getVersions(ctx context.Context) VersionInfo {
+	var versions VersionInfo
+
+	// Get Kubernetes version
+	serverVersion, err := clientset.Discovery().ServerVersion()
+	if err == nil {
+		versions.Kubernetes = serverVersion.GitVersion
+	}
+
+	// Get Talos version from first node's label
+	nodes, err := clientset.CoreV1().Nodes().List(ctx, metav1.ListOptions{})
+	if err == nil && len(nodes.Items) > 0 {
+		if talosVersion, ok := nodes.Items[0].Labels["node.talos.dev/os-version"]; ok {
+			versions.Talos = talosVersion
+		}
+	}
+
+	return versions
+}
+
 func getClusterStats(ctx context.Context) (ClusterStats, error) {
 	var stats ClusterStats
 
@@ -227,10 +253,13 @@ func apiHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
+	versions := getVersions(ctx)
+
 	data := DashboardData{
-		Nodes:   nodes,
-		Stats:   stats,
-		Updated: "just now",
+		Nodes:    nodes,
+		Stats:    stats,
+		Versions: versions,
+		Updated:  "just now",
 	}
 
 	w.Header().Set("Content-Type", "application/json")
