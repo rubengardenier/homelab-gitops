@@ -521,6 +521,10 @@
                             <span class="spec-label">MEMORY:</span>
                             <span class="spec-value">${formatMemory(parseK8sMemory(node.memoryTotal))}</span>
                         </div>
+                        <div class="spec">
+                            <span class="spec-label">IP:</span>
+                            <span class="spec-value">${node.ip || '--'}</span>
+                        </div>
                     </div>
                 </div>
             `;
