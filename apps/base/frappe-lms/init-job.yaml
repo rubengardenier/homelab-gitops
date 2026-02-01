@@ -65,8 +65,7 @@ spec:
                 --db-type postgres \
                 --db-root-username "$DB_ROOT_USER" \
                 --db-root-password "$DB_ROOT_PASSWORD" \
-                --admin-password "$ADMIN_PASSWORD" \
-                --no-mariadb-socket
+                --admin-password "$ADMIN_PASSWORD"
 
               # Install LMS app (already in image)
               bench --site frappe.homekube.dev install-app lms
