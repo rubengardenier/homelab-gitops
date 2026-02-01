@@ -17,6 +17,6 @@ data:
   REDIS_SOCKETIO: "redis://frappe-lms-redis:6379/2"
   # Database (existing PostgreSQL)
   DB_HOST: "192.168.1.200"
-  DB_PORT: "39087"
+  DB_PORT: "44759"
   # Timezone
   TZ: "Europe/Amsterdam"
