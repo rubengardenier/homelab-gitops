@@ -26,7 +26,8 @@ spec:
             - /bin/bash
             - -c
             - |
-              if [ ! -f /home/frappe/frappe-bench/sites/common_site_config.json ]; then
+              SITES=/home/frappe/frappe-bench/sites
+              if [ ! -f "$SITES/common_site_config.json" ]; then
                 echo '{
                   "db_host": "'$DB_HOST'",
                   "db_port": '$DB_PORT',
@@ -34,10 +35,12 @@ spec:
                   "redis_queue": "'$REDIS_QUEUE'",
                   "redis_socketio": "'$REDIS_SOCKETIO'",
                   "socketio_port": 9000
-                }' > /home/frappe/frappe-bench/sites/common_site_config.json
+                }' > "$SITES/common_site_config.json"
                 echo "Created common_site_config.json"
-              else
-                echo "common_site_config.json already exists"
+              fi
+              if [ ! -f "$SITES/apps.txt" ]; then
+                echo -e "frappe\nlms" > "$SITES/apps.txt"
+                echo "Created apps.txt"
               fi
           envFrom:
             - configMapRef:

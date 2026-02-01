@@ -28,7 +28,14 @@ spec:
             - /bin/bash
             - -c
             - |
+              set -e
               cd /home/frappe/frappe-bench
+
+              # Ensure apps.txt exists
+              if [ ! -f "sites/apps.txt" ]; then
+                echo -e "frappe\nlms" > sites/apps.txt
+                echo "Created apps.txt"
+              fi
 
               # Ensure common_site_config.json exists
               if [ ! -f "sites/common_site_config.json" ]; then
