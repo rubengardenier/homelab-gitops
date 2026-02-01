@@ -1,0 +1,22 @@
+apiVersion: v1
+kind: ConfigMap
+metadata:
+  name: frappe-lms-configmap
+  namespace: frappe-lms
+  labels:
+    app: frappe-lms
+    component: configmap
+data:
+  FRAPPE_SITE_NAME_HEADER: "frappe.homekube.dev"
+  SITE_NAME: "frappe.homekube.dev"
+  WORKER_CLASS: "gthread"
+  GUNICORN_WORKERS: "2"
+  # Redis (separate service within namespace)
+  REDIS_CACHE: "redis://frappe-lms-redis:6379/0"
+  REDIS_QUEUE: "redis://frappe-lms-redis:6379/1"
+  REDIS_SOCKETIO: "redis://frappe-lms-redis:6379/2"
+  # Database (existing PostgreSQL)
+  DB_HOST: "192.168.1.200"
+  DB_PORT: "39087"
+  # Timezone
+  TZ: "Europe/Amsterdam"

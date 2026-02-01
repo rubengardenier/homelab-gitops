@@ -1,0 +1,80 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frappe-lms-web
+  namespace: frappe-lms
+  labels: &labels
+    app: frappe-lms
+    component: web
+spec:
+  replicas: 1
+  selector:
+    matchLabels: *labels
+  template:
+    metadata:
+      labels: *labels
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: frappe-web
+          image: ghcr.io/rubengardenier/frappe-lms:v15
+          imagePullPolicy: IfNotPresent
+          command: ["bench", "serve", "--port", "8000"]
+          ports:
+            - name: http
+              containerPort: 8000
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+          envFrom:
+            - configMapRef:
+                name: frappe-lms-configmap
+            - secretRef:
+                name: frappe-lms-secrets
+          livenessProbe:
+            httpGet:
+              path: /api/method/ping
+              port: 8000
+              httpHeaders:
+                - name: Host
+                  value: frappe.homekube.dev
+            initialDelaySeconds: 120
+            periodSeconds: 15
+            timeoutSeconds: 10
+            failureThreshold: 5
+          readinessProbe:
+            httpGet:
+              path: /api/method/ping
+              port: 8000
+              httpHeaders:
+                - name: Host
+                  value: frappe.homekube.dev
+            initialDelaySeconds: 60
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "250m"
+              memory: "512Mi"
+            limits:
+              cpu: "1.5"
+              memory: "2048Mi"
+          volumeMounts:
+            - name: sites
+              mountPath: /home/frappe/frappe-bench/sites
+            - name: logs
+              mountPath: /home/frappe/frappe-bench/logs
+      volumes:
+        - name: sites
+          persistentVolumeClaim:
+            claimName: frappe-lms-sites
+        - name: logs
+          persistentVolumeClaim:
+            claimName: frappe-lms-logs

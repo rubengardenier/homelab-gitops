@@ -1,0 +1,82 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: frappe-lms-worker
+  namespace: frappe-lms
+  labels: &labels
+    app: frappe-lms
+    component: worker
+spec:
+  replicas: 1
+  selector:
+    matchLabels: *labels
+  template:
+    metadata:
+      labels: *labels
+    spec:
+      securityContext:
+        runAsUser: 1000
+        runAsGroup: 1000
+        fsGroup: 1000
+      containers:
+        - name: worker
+          image: ghcr.io/rubengardenier/frappe-lms:v15
+          imagePullPolicy: IfNotPresent
+          command: ["bench", "worker", "--queue", "default,short,long"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+          envFrom:
+            - configMapRef:
+                name: frappe-lms-configmap
+            - secretRef:
+                name: frappe-lms-secrets
+          resources:
+            requests:
+              cpu: "100m"
+              memory: "256Mi"
+            limits:
+              cpu: "1.0"
+              memory: "1024Mi"
+          volumeMounts:
+            - name: sites
+              mountPath: /home/frappe/frappe-bench/sites
+            - name: logs
+              mountPath: /home/frappe/frappe-bench/logs
+        - name: scheduler
+          image: ghcr.io/rubengardenier/frappe-lms:v15
+          imagePullPolicy: IfNotPresent
+          command: ["bench", "schedule"]
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+          envFrom:
+            - configMapRef:
+                name: frappe-lms-configmap
+            - secretRef:
+                name: frappe-lms-secrets
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "128Mi"
+            limits:
+              cpu: "0.5"
+              memory: "512Mi"
+          volumeMounts:
+            - name: sites
+              mountPath: /home/frappe/frappe-bench/sites
+            - name: logs
+              mountPath: /home/frappe/frappe-bench/logs
+      volumes:
+        - name: sites
+          persistentVolumeClaim:
+            claimName: frappe-lms-sites
+        - name: logs
+          persistentVolumeClaim:
+            claimName: frappe-lms-logs

@@ -1,0 +1,6 @@
+apiVersion: kustomize.config.k8s.io/v1beta1
+kind: Kustomization
+namespace: frappe-lms
+resources:
+  - ../../base/frappe-lms
+  - frappe-lms-secrets.sops.yaml
