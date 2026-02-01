@@ -22,7 +22,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: init
-          image: frappe/bench:latest
+          image: ptrmtb/frappe-lms:15.41
           imagePullPolicy: IfNotPresent
           command:
             - /bin/bash
@@ -48,8 +48,7 @@ spec:
                 --admin-password "$ADMIN_PASSWORD" \
                 --no-mariadb-socket
 
-              # Get and install LMS app
-              bench get-app lms https://github.com/frappe/lms.git
+              # Install LMS app (already in image)
               bench --site frappe.homekube.dev install-app lms
 
               # Set as default site
