@@ -20,7 +20,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: frappe-web
-          image: ghcr.io/rubengardenier/frappe-lms:v15
+          image: frappe/bench:latest
           imagePullPolicy: IfNotPresent
           command: ["bench", "serve", "--port", "8000"]
           ports:

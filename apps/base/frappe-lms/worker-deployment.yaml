@@ -20,7 +20,7 @@ spec:
         fsGroup: 1000
       containers:
         - name: worker
-          image: ghcr.io/rubengardenier/frappe-lms:v15
+          image: frappe/bench:latest
           imagePullPolicy: IfNotPresent
           command: ["bench", "worker", "--queue", "default,short,long"]
           securityContext:
@@ -47,7 +47,7 @@ spec:
             - name: logs
               mountPath: /home/frappe/frappe-bench/logs
         - name: scheduler
-          image: ghcr.io/rubengardenier/frappe-lms:v15
+          image: frappe/bench:latest
           imagePullPolicy: IfNotPresent
           command: ["bench", "schedule"]
           securityContext:
