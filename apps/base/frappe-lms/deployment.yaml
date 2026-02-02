@@ -53,7 +53,7 @@ spec:
           image: ptrmtb/frappe-lms:15.41
           imagePullPolicy: IfNotPresent
           ports:
-            - name: http
+            - name: gunicorn
               containerPort: 8000
           securityContext:
             allowPrivilegeEscalation: false
@@ -100,6 +100,45 @@ spec:
               mountPath: /home/frappe/frappe-bench/sites
             - name: logs
               mountPath: /home/frappe/frappe-bench/logs
+        - name: nginx
+          image: ptrmtb/frappe-lms:15.41
+          imagePullPolicy: IfNotPresent
+          command: ["nginx", "-g", "daemon off;"]
+          ports:
+            - name: http
+              containerPort: 8080
+          securityContext:
+            allowPrivilegeEscalation: false
+            runAsNonRoot: true
+            capabilities:
+              drop:
+                - ALL
+          readinessProbe:
+            httpGet:
+              path: /api/method/ping
+              port: 8080
+              httpHeaders:
+                - name: Host
+                  value: frappe.homekube.dev
+            initialDelaySeconds: 70
+            periodSeconds: 10
+            timeoutSeconds: 5
+            failureThreshold: 3
+          resources:
+            requests:
+              cpu: "50m"
+              memory: "64Mi"
+            limits:
+              cpu: "500m"
+              memory: "256Mi"
+          volumeMounts:
+            - name: sites
+              mountPath: /home/frappe/frappe-bench/sites
+              readOnly: true
+            - name: nginx-config
+              mountPath: /etc/nginx/nginx.conf
+              subPath: nginx.conf
+              readOnly: true
       volumes:
         - name: sites
           persistentVolumeClaim:
@@ -107,3 +146,6 @@ spec:
         - name: logs
           persistentVolumeClaim:
             claimName: frappe-lms-logs
+        - name: nginx-config
+          configMap:
+            name: frappe-lms-nginx

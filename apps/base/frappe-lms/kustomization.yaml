@@ -3,6 +3,7 @@ kind: Kustomization
 resources:
   - namespace.yaml
   - configmap.yaml
+  - nginx-configmap.yaml
   - redis-deployment.yaml
   - deployment.yaml
   - worker-deployment.yaml
