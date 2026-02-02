@@ -31,43 +31,37 @@ spec:
               set -e
               cd /home/frappe/frappe-bench
 
+              # Clean up any stale site data from previous failed attempts
+              rm -rf sites/frappe.homekube.dev
+              rm -f sites/currentsite.txt
+              echo "Cleaned stale site data"
+
               # Ensure apps.txt exists
-              if [ ! -f "sites/apps.txt" ]; then
-                echo -e "frappe\nlms" > sites/apps.txt
-                echo "Created apps.txt"
-              fi
+              echo -e "frappe\nlms" > sites/apps.txt
+              echo "Created apps.txt"
 
-              # Ensure common_site_config.json exists
-              if [ ! -f "sites/common_site_config.json" ]; then
-                echo '{
-                  "db_host": "'$DB_HOST'",
-                  "db_port": '$DB_PORT',
-                  "redis_cache": "'$REDIS_CACHE'",
-                  "redis_queue": "'$REDIS_QUEUE'",
-                  "redis_socketio": "'$REDIS_SOCKETIO'",
-                  "socketio_port": 9000
-                }' > sites/common_site_config.json
-                echo "Created common_site_config.json"
-              fi
-
-              # Check if site already exists
-              if [ -f "sites/frappe.homekube.dev/site_config.json" ]; then
-                echo "Site already exists, running migrate..."
-                bench --site frappe.homekube.dev migrate
-                exit 0
-              fi
+              # Create common_site_config.json
+              echo '{
+                "db_host": "'$DB_HOST'",
+                "db_port": '$DB_PORT',
+                "redis_cache": "'$REDIS_CACHE'",
+                "redis_queue": "'$REDIS_QUEUE'",
+                "redis_socketio": "'$REDIS_SOCKETIO'",
+                "socketio_port": 9000
+              }' > sites/common_site_config.json
+              echo "Created common_site_config.json"
 
               # Create site with PostgreSQL
               bench new-site frappe.homekube.dev \
                 --db-host "$DB_HOST" \
                 --db-port "$DB_PORT" \
-                --db-name frappe \
+                --db-name frappe_lms \
                 --db-type postgres \
                 --db-root-username "$DB_ROOT_USER" \
                 --db-root-password "$DB_ROOT_PASSWORD" \
                 --admin-password "$ADMIN_PASSWORD"
 
-              # Install LMS app (already in image)
+              # Install LMS app
               bench --site frappe.homekube.dev install-app lms
 
               # Set as default site

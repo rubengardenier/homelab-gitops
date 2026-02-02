@@ -87,4 +87,6 @@ data:
         service: http://10.105.90.19:80
       - hostname: openwebui.homekube.dev
         service: http://10.100.84.127:8080
+      - hostname: frappe.homekube.dev
+        service: http://10.102.61.216:80
       - service: http_status:404
