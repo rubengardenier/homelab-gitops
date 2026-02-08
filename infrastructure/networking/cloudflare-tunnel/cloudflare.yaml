@@ -79,8 +79,6 @@ data:
       # Using ClusterIP addresses directly as workaround for DNS issues
       - hostname: dashboard.homekube.dev
         service: http://10.107.187.86:80
-      - hostname: linkding.homekube.dev
-        service: http://10.98.55.27:9090
       - hostname: mealie.homekube.dev
         service: http://10.107.23.240:9000
       - hostname: n8n.homekube.dev
