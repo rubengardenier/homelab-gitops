@@ -7,15 +7,13 @@ machine:
     kubePrism:
       enabled: true
       port: 7445
+    stableHostname: false
 
   # Install disk configuration
   install:
     disk: /dev/nvme0n1
     wipe: false
 
-  # Network configuration
-  network:
-    hostname: talos-cp-1
 
 cluster:
   # Allow scheduling on control plane (optional, for small clusters)

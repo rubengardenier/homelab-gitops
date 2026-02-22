@@ -1,0 +1,351 @@
+{
+  "name": "Renovate PR Auto-Review",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "renovate-pr-review",
+        "responseMode": "onReceived",
+        "responseData": "firstEntryJson"
+      },
+      "id": "f1a2b3c4-d5e6-7890-abcd-ef1234567890",
+      "name": "GitHub Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [220, 300],
+      "webhookId": "renovate-pr-review"
+    },
+    {
+      "parameters": {
+        "jsCode": "const body = $input.item.json.body;\n\n// Only process opened/synchronize/reopened Renovate PRs\nconst validActions = ['opened', 'synchronize', 'reopened'];\nconst isRenovate = body?.pull_request?.user?.login?.toLowerCase().includes('renovate');\nconst isValidAction = validActions.includes(body?.action);\n\nif (!isRenovate || !isValidAction || !body?.pull_request) {\n  return []; // Skip non-Renovate PRs\n}\n\nreturn [{\n  json: {\n    repo: body.repository.full_name,\n    pr_number: body.pull_request.number,\n    pr_title: body.pull_request.title,\n    pr_body: body.pull_request.body || '(no description)',\n    pr_node_id: body.pull_request.node_id,\n    head_sha: body.pull_request.head.sha,\n    pr_url: body.pull_request.html_url\n  }\n}];"
+      },
+      "id": "a1111111-1111-1111-1111-111111111111",
+      "name": "Filter: Is Renovate PR?",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [440, 300]
+    },
+    {
+      "parameters": {
+        "method": "GET",
+        "url": "=https://api.github.com/repos/{{ $json.repo }}/pulls/{{ $json.pr_number }}/files",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3+json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "n8n-renovate-reviewer"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "id": "b2222222-2222-2222-2222-222222222222",
+      "name": "Get PR Files",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [660, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-cred-id",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const prData = $('Filter: Is Renovate PR?').item.json;\nconst files = $input.all();\n\n// Build file summary (truncate large diffs)\nconst filesSummary = files.map(f => {\n  const file = f.json;\n  const patch = file.patch || '(binary or no diff)';\n  const truncatedPatch = patch.length > 2000 ? patch.substring(0, 2000) + '\\n... (truncated)' : patch;\n  return `### ${file.filename} (${file.status})\\n+${file.additions} -${file.deletions}\\n\\`\\`\\`diff\\n${truncatedPatch}\\n\\`\\`\\``;\n}).join('\\n\\n');\n\nreturn [{\n  json: {\n    ...prData,\n    files_summary: filesSummary,\n    total_files: files.length,\n    filenames: files.map(f => f.json.filename).join(', ')\n  }\n}];"
+      },
+      "id": "c3333333-3333-3333-3333-333333333333",
+      "name": "Build Claude Prompt",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [880, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.openai.com/v1/chat/completions",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "content-type",
+              "value": "application/json"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"model\": \"gpt-4o\",\n  \"max_tokens\": 1024,\n  \"messages\": [\n    {\n      \"role\": \"system\",\n      \"content\": \"You are a security-focused code reviewer analyzing Renovate dependency update PRs in a GitOps/Kubernetes homelab repository. Always respond with valid JSON only, no markdown.\"\n    },\n    {\n      \"role\": \"user\",\n      \"content\": \"Analyze this Renovate PR and determine if it is SAFE to auto-approve and merge.\\n\\nPR: {{ $json.pr_title }}\\nURL: {{ $json.pr_url }}\\nDescription:\\n{{ $json.pr_body }}\\n\\nChanged files ({{ $json.total_files }} total): {{ $json.filenames }}\\n\\n{{ $json.files_summary }}\\n\\nApprove if:\\n- Routine patch/minor version bump\\n- Only version/dependency files changed (Chart.yaml, kustomization.yaml, package.json, go.mod, etc.)\\n- Version jump is reasonable\\n\\nReject if:\\n- Major version bump without clear justification\\n- Unexpected non-dependency files modified\\n- Suspicious package name changes\\n- Multiple major version jumps at once\\n\\nRespond ONLY with this JSON structure:\\n{\\n  \\\"decision\\\": \\\"approve\\\" or \\\"reject\\\",\\n  \\\"confidence\\\": \\\"high\\\", \\\"medium\\\", or \\\"low\\\",\\n  \\\"summary\\\": \\\"one sentence describing what this PR updates\\\",\\n  \\\"concerns\\\": [],\\n  \\\"comment\\\": \\\"comment to post on the PR (in Dutch, friendly tone)\\\"\\n}\"\n    }\n  ]\n}",
+        "options": {}
+      },
+      "id": "d4444444-4444-4444-4444-444444444444",
+      "name": "Analyze with ChatGPT",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1100, 300],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "openai-cred-id",
+          "name": "OpenAI API Key"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsCode": "const response = $input.item.json;\nconst prData = $('Build Claude Prompt').item.json;\n\nlet parsed;\ntry {\n  const text = response.choices[0].message.content.trim();\n  // Strip markdown code blocks if Claude wraps it\n  const jsonStr = text.replace(/^```json?\\n?/, '').replace(/\\n?```$/, '');\n  parsed = JSON.parse(jsonStr);\n} catch(e) {\n  // Fallback: don't auto-approve on parse failure\n  parsed = {\n    decision: 'reject',\n    confidence: 'low',\n    summary: 'AI response kon niet worden verwerkt',\n    concerns: ['Parse fout: ' + e.message],\n    comment: '⚠️ De AI review kon niet worden verwerkt. Handmatige review vereist.'\n  };\n}\n\nreturn [{\n  json: {\n    ...prData,\n    ai_decision: parsed.decision,\n    ai_confidence: parsed.confidence,\n    ai_summary: parsed.summary,\n    ai_concerns: parsed.concerns || [],\n    ai_comment: parsed.comment\n  }\n}];"
+      },
+      "id": "e5555555-5555-5555-5555-555555555555",
+      "name": "Parse AI Response",
+      "type": "n8n-nodes-base.code",
+      "typeVersion": 2,
+      "position": [1320, 300]
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict"
+          },
+          "conditions": [
+            {
+              "id": "approve-cond",
+              "leftValue": "={{ $json.ai_decision }}",
+              "rightValue": "approve",
+              "operator": {
+                "type": "string",
+                "operation": "equals"
+              }
+            }
+          ],
+          "combinator": "and"
+        }
+      },
+      "id": "f6666666-6666-6666-6666-666666666666",
+      "name": "Approve or Reject?",
+      "type": "n8n-nodes-base.if",
+      "typeVersion": 2,
+      "position": [1540, 300]
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.github.com/repos/{{ $json.repo }}/pulls/{{ $json.pr_number }}/reviews",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3+json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "n8n-renovate-reviewer"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"commit_id\": \"{{ $json.head_sha }}\",\n  \"body\": \"{{ $json.ai_comment }}\",\n  \"event\": \"APPROVE\"\n}",
+        "options": {}
+      },
+      "id": "g7777777-7777-7777-7777-777777777777",
+      "name": "Approve PR",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1760, 180],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-cred-id",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "https://api.github.com/graphql",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3+json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "n8n-renovate-reviewer"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"query\": \"mutation($prId: ID!) { enablePullRequestAutoMerge(input: {pullRequestId: $prId, mergeMethod: SQUASH}) { pullRequest { number autoMergeRequest { enabledAt } } } }\",\n  \"variables\": {\n    \"prId\": \"{{ $('Parse AI Response').item.json.pr_node_id }}\"\n  }\n}",
+        "options": {}
+      },
+      "id": "h8888888-8888-8888-8888-888888888888",
+      "name": "Enable Auto-Merge",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1980, 180],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-cred-id",
+          "name": "GitHub Token"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.github.com/repos/{{ $json.repo }}/issues/{{ $json.pr_number }}/comments",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "httpHeaderAuth",
+        "sendHeaders": true,
+        "headerParameters": {
+          "parameters": [
+            {
+              "name": "Accept",
+              "value": "application/vnd.github.v3+json"
+            },
+            {
+              "name": "User-Agent",
+              "value": "n8n-renovate-reviewer"
+            }
+          ]
+        },
+        "sendBody": true,
+        "specifyBody": "json",
+        "jsonBody": "={\n  \"body\": \"## 🤖 AI Review: Handmatige review vereist\\n\\n{{ $json.ai_comment }}\\n\\n**Samenvatting:** {{ $json.ai_summary }}\\n\\n**Aandachtspunten:**\\n{{ $json.ai_concerns.length > 0 ? $json.ai_concerns.map(c => '- ' + c).join('\\\\n') : '- Geen specifieke problemen, maar lage confidence' }}\\n\\n*Confidence: {{ $json.ai_confidence }} | Model: claude-sonnet-4-6*\"\n}",
+        "options": {}
+      },
+      "id": "i9999999-9999-9999-9999-999999999999",
+      "name": "Post Review Comment",
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.1,
+      "position": [1760, 420],
+      "credentials": {
+        "httpHeaderAuth": {
+          "id": "github-cred-id",
+          "name": "GitHub Token"
+        }
+      }
+    }
+  ],
+  "connections": {
+    "GitHub Webhook": {
+      "main": [
+        [
+          {
+            "node": "Filter: Is Renovate PR?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter: Is Renovate PR?": {
+      "main": [
+        [
+          {
+            "node": "Get PR Files",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Get PR Files": {
+      "main": [
+        [
+          {
+            "node": "Build Claude Prompt",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Build Claude Prompt": {
+      "main": [
+        [
+          {
+            "node": "Analyze with Claude",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Analyze with ChatGPT": {
+      "main": [
+        [
+          {
+            "node": "Parse AI Response",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Parse AI Response": {
+      "main": [
+        [
+          {
+            "node": "Approve or Reject?",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approve or Reject?": {
+      "main": [
+        [
+          {
+            "node": "Approve PR",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Post Review Comment",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Approve PR": {
+      "main": [
+        [
+          {
+            "node": "Enable Auto-Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": false,
+  "settings": {
+    "executionOrder": "v1"
+  }
+}

@@ -10,6 +10,10 @@ machine:
   network:
     hostname: talos-worker-2
 
+  # Disable stableHostname so static hostname can be set
+  features:
+    stableHostname: false
+
   # Kubelet configuration
   kubelet:
     extraArgs:
