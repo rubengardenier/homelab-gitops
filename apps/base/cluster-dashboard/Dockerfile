@@ -14,7 +14,7 @@ RUN go mod tidy && go mod download
 RUN CGO_ENABLED=0 GOOS=linux go build -a -installsuffix cgo -o server .
 
 # Final stage
-FROM alpine:3.23
+FROM alpine:3.24
 
 # Install ca-certificates for HTTPS
 RUN apk --no-cache add ca-certificates
